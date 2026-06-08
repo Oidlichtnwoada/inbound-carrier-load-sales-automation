@@ -194,7 +194,10 @@ def _handle_verify_carrier(event: dict) -> dict:
         logger.exception("Failed to retrieve FMCSA secret")
         return _response(500, {"error": "Internal configuration error."})
 
-    url = f"https://mobile.fmcsa.dot.gov/qc/services/carriers/{mc_number}?webKey={fmcsa_key}"
+    url = (
+        "https://mobile.fmcsa.dot.gov/qc/services/carriers/search/docket-number/"
+        f"{mc_number}?webKey={fmcsa_key}"
+    )
 
     try:
         req = urllib.request.Request(
