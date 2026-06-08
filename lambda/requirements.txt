@@ -1,0 +1,4 @@
+# boto3 is pre-installed in the AWS Lambda Python runtime image.
+# Pinning it here provides an explicit audit trail and allows future version
+# upgrades to be tracked in version control.
+boto3>=1.43.24
