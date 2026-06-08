@@ -1,2 +1,3 @@
-opentofu/secrets.auto.tfvars
+*.auto.tfvars
 .terraform
+__pycache__
