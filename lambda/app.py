@@ -39,6 +39,7 @@ API_KEY_SECRET_ARN: str = os.environ["API_KEY_SECRET_ARN"]
 CLOUDWATCH_NAMESPACE: str = os.environ.get(
     "CLOUDWATCH_NAMESPACE", "InboundCarrierSales/Calls"
 )
+EMPLOYEE_COST_PER_HOUR: float = float(os.environ.get("EMPLOYEE_COST_PER_HOUR", "50"))
 
 # ---------------------------------------------------------------------------
 # AWS clients (module-level → reused across warm invocations)
@@ -368,7 +369,8 @@ def _handle_save_metrics(event: dict) -> dict:
     outcome                : str    "successful" | "unsuccessful"
     deal_volume            : float  USD – set to the agreed loadboard_rate
     call_duration_minutes  : float  actual duration of the AI call in minutes
-    employee_cost_saved    : float  USD – estimated savings versus a human agent
+    EmployeeCostSaved is calculated automatically as:
+    call_duration_minutes * (EMPLOYEE_COST_PER_HOUR / 60)
     """
     try:
         body: dict = json.loads(event.get("body") or "{}")
@@ -379,7 +381,6 @@ def _handle_save_metrics(event: dict) -> dict:
     outcome = body.get("outcome")
     deal_volume = body.get("deal_volume")
     call_duration_minutes = body.get("call_duration_minutes")
-    employee_cost_saved = body.get("employee_cost_saved")
 
     # ── Validation ───────────────────────────────────────────────────────────
     if sentiment is not None:
@@ -431,17 +432,11 @@ def _handle_save_metrics(event: dict) -> dict:
                 400, {"error": "'call_duration_minutes' must be a number."}
             )
         _add("CallDurationMinutes", duration)
-        # Baseline: 20-minute average human freight-sales call
-        time_saved = max(0.0, 20.0 - duration)
+        # Automated handling saves the full call duration for human staff.
+        time_saved = duration
         _add("TimeSavedMinutes", time_saved)
-
-    if employee_cost_saved is not None:
-        try:
-            _add("EmployeeCostSaved", float(employee_cost_saved))
-        except (ValueError, TypeError):
-            return _response(
-                400, {"error": "'employee_cost_saved' must be a number."}
-            )
+        employee_cost_saved = duration * (EMPLOYEE_COST_PER_HOUR / 60.0)
+        _add("EmployeeCostSaved", employee_cost_saved)
 
     # ── Publish ──────────────────────────────────────────────────────────────
     if metric_data:

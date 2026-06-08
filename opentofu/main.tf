@@ -270,11 +270,12 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      LOADS_BUCKET         = aws_s3_bucket.loads.id
-      LOADS_KEY            = local.loads_s3_key
-      FMCSA_SECRET_ARN     = aws_secretsmanager_secret.fmcsa_api_key.arn
-      API_KEY_SECRET_ARN   = aws_secretsmanager_secret.api_key.arn
-      CLOUDWATCH_NAMESPACE = local.custom_namespace
+      LOADS_BUCKET           = aws_s3_bucket.loads.id
+      LOADS_KEY              = local.loads_s3_key
+      FMCSA_SECRET_ARN       = aws_secretsmanager_secret.fmcsa_api_key.arn
+      API_KEY_SECRET_ARN     = aws_secretsmanager_secret.api_key.arn
+      CLOUDWATCH_NAMESPACE   = local.custom_namespace
+      EMPLOYEE_COST_PER_HOUR = tostring(var.employee_cost_per_hour)
     }
   }
 

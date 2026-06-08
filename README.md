@@ -136,7 +136,12 @@ Record the outcome of a completed carrier call. The Lambda publishes each field 
 | `outcome` | string | ✅ | `"successful"` or `"unsuccessful"` |
 | `deal_volume` | float | — | Agreed rate in USD (use `loadboard_rate` on success) |
 | `call_duration_minutes` | float | — | Actual AI call duration in minutes |
-| `employee_cost_saved` | float | — | Estimated USD saved versus a human agent |
+
+`EmployeeCostSaved` is computed automatically by the API as:
+
+`call_duration_minutes * (employee_cost_per_hour / 60)`
+
+where `employee_cost_per_hour` is an OpenTofu input variable (default: `50`).
 
 **200 response example**
 ```json
@@ -194,6 +199,8 @@ api_key       = "<CHOOSE_A_STRONG_RANDOM_KEY>"
 ```
 
 `opentofu/secrets.auto.tfvars` is git-ignored so secrets stay local, while `opentofu/secrets.auto.tfvars.example` is safe to commit.
+
+Optional: if your staffing cost differs from the default, set `employee_cost_per_hour` in any `.tfvars` file or pass it via CLI.
 
 ---
 
@@ -260,7 +267,7 @@ curl -s -H "X-Api-Key: $API_KEY" \
 curl -s -X POST \
   -H "X-Api-Key: $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"sentiment":4.2,"outcome":"successful","deal_volume":1850,"call_duration_minutes":7.5,"employee_cost_saved":22.50}' \
+  -d '{"sentiment":4.2,"outcome":"successful","deal_volume":1850,"call_duration_minutes":7.5}' \
   "$API_URL/metrics" | jq .
 ```
 

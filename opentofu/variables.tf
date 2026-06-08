@@ -33,3 +33,9 @@ variable "state_bucket_name" {
   type        = string
   default     = "inbound-carrier-tofu-state"
 }
+
+variable "employee_cost_per_hour" {
+  description = "Baseline employee cost per hour in USD used to calculate EmployeeCostSaved from call duration."
+  type        = number
+  default     = 50
+}
