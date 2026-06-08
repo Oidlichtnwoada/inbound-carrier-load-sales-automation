@@ -53,11 +53,11 @@ resource "aws_s3_bucket_public_access_block" "loads" {
 }
 
 resource "aws_s3_object" "loads" {
-  bucket        = aws_s3_bucket.loads.id
-  key           = local.loads_s3_key
-  source        = "${path.module}/loads.json"
-  content_type  = "application/json"
-  etag          = filemd5("${path.module}/loads.json")
+  bucket       = aws_s3_bucket.loads.id
+  key          = local.loads_s3_key
+  source       = "${path.module}/loads.json"
+  content_type = "application/json"
+  etag         = filemd5("${path.module}/loads.json")
 
   depends_on = [aws_s3_bucket_public_access_block.loads]
 }
@@ -208,9 +208,9 @@ resource "aws_iam_role_policy" "lambda_custom" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "S3LoadsRead"
-        Effect = "Allow"
-        Action = ["s3:GetObject"]
+        Sid      = "S3LoadsRead"
+        Effect   = "Allow"
+        Action   = ["s3:GetObject"]
         Resource = ["${aws_s3_bucket.loads.arn}/*"]
       },
       {
@@ -436,7 +436,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           view   = "singleValue"
           period = 86400
           metrics = [
-            [local.custom_namespace, "SuccessfulDeals",   { id = "m1", visible = false, stat = "Sum" }],
+            [local.custom_namespace, "SuccessfulDeals", { id = "m1", visible = false, stat = "Sum" }],
             [local.custom_namespace, "CarrierCallsTotal", { id = "m2", visible = false, stat = "Sum" }],
             [{ expression = "IF(m2>0,(m1/m2)*100,0)", label = "Success Rate %", id = "e1" }]
           ]
@@ -499,15 +499,15 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
-          title  = "Deal Value per Hour (last 7 days)"
-          view   = "timeSeries"
+          title   = "Deal Value per Hour (last 7 days)"
+          view    = "timeSeries"
           stacked = false
-          stat   = "Sum"
-          period = 3600
+          stat    = "Sum"
+          period  = 3600
           metrics = [
             [local.custom_namespace, "DealValue", { label = "Deal Value USD", color = "#2ca02c" }]
           ]
-          yAxis = { left = { label = "USD", showUnits = false } }
+          yAxis  = { left = { label = "USD", showUnits = false } }
           legend = { position = "bottom" }
         }
       },
@@ -526,7 +526,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           stat    = "Sum"
           period  = 3600
           metrics = [
-            [local.custom_namespace, "SuccessfulDeals",   { label = "Successful",   color = "#2ca02c" }],
+            [local.custom_namespace, "SuccessfulDeals", { label = "Successful", color = "#2ca02c" }],
             [local.custom_namespace, "UnsuccessfulCalls", { label = "Unsuccessful", color = "#d62728" }],
           ]
           yAxis  = { left = { label = "Calls", showUnits = false } }
@@ -597,11 +597,11 @@ resource "aws_cloudwatch_dashboard" "main" {
           stat    = "Sum"
           period  = 3600
           metrics = [
-            [local.custom_namespace, "EmployeeCostSaved", { label = "Cost Saved (USD)",   color = "#1f77b4", yAxis = "left"  }],
-            [local.custom_namespace, "TimeSavedMinutes",  { label = "Time Saved (min)",   color = "#ff7f0e", yAxis = "right" }],
+            [local.custom_namespace, "EmployeeCostSaved", { label = "Cost Saved (USD)", color = "#1f77b4", yAxis = "left" }],
+            [local.custom_namespace, "TimeSavedMinutes", { label = "Time Saved (min)", color = "#ff7f0e", yAxis = "right" }],
           ]
           yAxis = {
-            left  = { label = "USD",     showUnits = false }
+            left  = { label = "USD", showUnits = false }
             right = { label = "Minutes", showUnits = false }
           }
           legend = { position = "bottom" }
@@ -635,8 +635,8 @@ resource "aws_cloudwatch_dashboard" "main" {
           period  = 300
           metrics = [
             ["AWS/Lambda", "Invocations", "FunctionName", aws_lambda_function.api.function_name, { label = "Invocations", color = "#1f77b4" }],
-            ["AWS/Lambda", "Errors",      "FunctionName", aws_lambda_function.api.function_name, { label = "Errors",      color = "#d62728" }],
-            ["AWS/Lambda", "Throttles",   "FunctionName", aws_lambda_function.api.function_name, { label = "Throttles",   color = "#ff7f0e" }],
+            ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.api.function_name, { label = "Errors", color = "#d62728" }],
+            ["AWS/Lambda", "Throttles", "FunctionName", aws_lambda_function.api.function_name, { label = "Throttles", color = "#ff7f0e" }],
           ]
           yAxis  = { left = { label = "Count", showUnits = false } }
           legend = { position = "bottom" }
@@ -656,9 +656,9 @@ resource "aws_cloudwatch_dashboard" "main" {
           stacked = false
           period  = 300
           metrics = [
-            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p50", label = "p50",  color = "#2ca02c" }],
-            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p95", label = "p95",  color = "#ff7f0e" }],
-            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p99", label = "p99",  color = "#d62728" }],
+            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p50", label = "p50", color = "#2ca02c" }],
+            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p95", label = "p95", color = "#ff7f0e" }],
+            ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p99", label = "p99", color = "#d62728" }],
           ]
           yAxis  = { left = { label = "ms", showUnits = false } }
           legend = { position = "bottom" }
@@ -679,9 +679,9 @@ resource "aws_cloudwatch_dashboard" "main" {
           stat    = "Sum"
           period  = 300
           metrics = [
-            ["AWS/ApiGateway", "Count",           "ApiId", aws_apigatewayv2_api.main.id, { label = "Total Requests", color = "#1f77b4" }],
-            ["AWS/ApiGateway", "4XXError",        "ApiId", aws_apigatewayv2_api.main.id, { label = "4xx Errors",     color = "#ff7f0e" }],
-            ["AWS/ApiGateway", "5XXError",        "ApiId", aws_apigatewayv2_api.main.id, { label = "5xx Errors",     color = "#d62728" }],
+            ["AWS/ApiGateway", "Count", "ApiId", aws_apigatewayv2_api.main.id, { label = "Total Requests", color = "#1f77b4" }],
+            ["AWS/ApiGateway", "4XXError", "ApiId", aws_apigatewayv2_api.main.id, { label = "4xx Errors", color = "#ff7f0e" }],
+            ["AWS/ApiGateway", "5XXError", "ApiId", aws_apigatewayv2_api.main.id, { label = "5xx Errors", color = "#d62728" }],
           ]
           yAxis  = { left = { label = "Count", showUnits = false } }
           legend = { position = "bottom" }
@@ -701,9 +701,9 @@ resource "aws_cloudwatch_dashboard" "main" {
           stacked = false
           period  = 300
           metrics = [
-            ["AWS/ApiGateway", "Latency",           "ApiId", aws_apigatewayv2_api.main.id, { stat = "p50", label = "p50",  color = "#2ca02c" }],
-            ["AWS/ApiGateway", "Latency",           "ApiId", aws_apigatewayv2_api.main.id, { stat = "p95", label = "p95",  color = "#ff7f0e" }],
-            ["AWS/ApiGateway", "IntegrationLatency","ApiId", aws_apigatewayv2_api.main.id, { stat = "p95", label = "Integration p95", color = "#9467bd" }],
+            ["AWS/ApiGateway", "Latency", "ApiId", aws_apigatewayv2_api.main.id, { stat = "p50", label = "p50", color = "#2ca02c" }],
+            ["AWS/ApiGateway", "Latency", "ApiId", aws_apigatewayv2_api.main.id, { stat = "p95", label = "p95", color = "#ff7f0e" }],
+            ["AWS/ApiGateway", "IntegrationLatency", "ApiId", aws_apigatewayv2_api.main.id, { stat = "p95", label = "Integration p95", color = "#9467bd" }],
           ]
           yAxis  = { left = { label = "ms", showUnits = false } }
           legend = { position = "bottom" }

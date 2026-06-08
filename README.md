@@ -178,7 +178,26 @@ aws s3api put-bucket-encryption \
 
 ---
 
-### Step 2 — Initialise OpenTofu
+### Step 2 — Create local secrets.auto.tfvars
+
+Create the local variables file from the committed example and fill in both keys:
+
+```bash
+cp opentofu/secrets.auto.tfvars.example opentofu/secrets.auto.tfvars
+```
+
+Then edit `opentofu/secrets.auto.tfvars`:
+
+```hcl
+fmcsa_api_key = "<YOUR_FMCSA_WEBKEY>"
+api_key       = "<CHOOSE_A_STRONG_RANDOM_KEY>"
+```
+
+`opentofu/secrets.auto.tfvars` is git-ignored so secrets stay local, while `opentofu/secrets.auto.tfvars.example` is safe to commit.
+
+---
+
+### Step 3 — Initialise OpenTofu
 
 ```bash
 cd opentofu
@@ -187,12 +206,20 @@ tofu init
 
 ---
 
-### Step 3 — Deploy
+### Step 4 — Format OpenTofu files
+
+From the repository root, run the formatting helper (uses `tofu fmt -recursive .`):
 
 ```bash
-tofu apply \
-  -var="fmcsa_api_key=<YOUR_FMCSA_WEBKEY>" \
-  -var="api_key=<CHOOSE_A_STRONG_RANDOM_KEY>"
+./format.sh
+```
+
+---
+
+### Step 5 — Deploy
+
+```bash
+tofu apply
 ```
 
 OpenTofu will:
@@ -207,7 +234,7 @@ The full deployment takes approximately **3–5 minutes** (dominated by the Dock
 
 ---
 
-### Step 4 — Retrieve the API endpoint
+### Step 6 — Retrieve the API endpoint
 
 ```bash
 tofu output api_endpoint
@@ -216,11 +243,11 @@ tofu output api_endpoint
 
 ---
 
-### Step 5 — Smoke-test
+### Step 7 — Smoke-test
 
 ```bash
 API_URL=$(tofu output -raw api_endpoint)
-API_KEY="<the api_key you set in step 3>"
+API_KEY="<the api_key you set in step 2>"
 
 # List all loads
 curl -s -H "X-Api-Key: $API_KEY" "$API_URL/loads" | jq .
@@ -248,9 +275,7 @@ Every time `lambda/app.py`, `lambda/Dockerfile`, or `lambda/requirements.txt` ch
 ### Teardown
 
 ```bash
-tofu destroy \
-  -var="fmcsa_api_key=placeholder" \
-  -var="api_key=placeholder"
+tofu destroy
 ```
 
 > The state S3 bucket is **not** destroyed by `tofu destroy` — delete it manually when no longer needed.
