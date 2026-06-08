@@ -241,7 +241,7 @@ tofu apply
 OpenTofu will:
 
 1. Create the ECR repository.
-2. **Build the Lambda Docker image locally** (`docker build --platform linux/amd64`) and push it to ECR.
+2. **Build the Lambda Docker image locally** (`docker buildx build --platform linux/amd64 --load`) and push it to ECR.
 3. Upload `loads.json` to the new S3 bucket.
 4. Store both secrets in Secrets Manager.
 5. Deploy the Lambda function (container image), API Gateway HTTP API, IAM roles, CloudWatch log groups, and the operations dashboard.

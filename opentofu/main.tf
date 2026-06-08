@@ -4,6 +4,7 @@
 locals {
   name_prefix      = var.app_name
   custom_namespace = "InboundCarrierSales/Calls"
+  lambda_build_strategy = "buildx-load-v1"
 
   # Deterministic image tag: changes whenever app.py or Dockerfile changes,
   # which forces Terraform to rebuild & push the image and update the Lambda.
@@ -151,7 +152,8 @@ resource "aws_ecr_lifecycle_policy" "lambda_api" {
 # =============================================================================
 resource "null_resource" "docker_build_push" {
   triggers = {
-    image_tag = local.lambda_image_tag
+    image_tag       = local.lambda_image_tag
+    build_strategy  = local.lambda_build_strategy
   }
 
   provisioner "local-exec" {
@@ -163,9 +165,12 @@ resource "null_resource" "docker_build_push" {
           "${aws_ecr_repository.lambda_api.registry_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
 
       echo "==> Building image (linux/amd64)…"
-      docker build \
+      docker buildx build \
         --platform linux/amd64 \
         --pull \
+        --provenance=false \
+        --sbom=false \
+        --load \
         --tag "${aws_ecr_repository.lambda_api.repository_url}:${local.lambda_image_tag}" \
         "${local.lambda_src_dir}"
 
@@ -397,6 +402,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 5
         height = 5
         properties = {
+          region = var.aws_region
           title  = "💰 Total Deal Value Today (USD)"
           view   = "singleValue"
           stat   = "Sum"
@@ -415,6 +421,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 4
         height = 5
         properties = {
+          region = var.aws_region
           title  = "✅ Deals Closed Today"
           view   = "singleValue"
           stat   = "Sum"
@@ -433,6 +440,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 5
         height = 5
         properties = {
+          region = var.aws_region
           title  = "📊 Call Success Rate (%)"
           view   = "singleValue"
           period = 86400
@@ -452,6 +460,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 5
         height = 5
         properties = {
+          region = var.aws_region
           title  = "🏦 Employee Cost Saved Today (USD)"
           view   = "singleValue"
           stat   = "Sum"
@@ -470,6 +479,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 5
         height = 5
         properties = {
+          region = var.aws_region
           title  = "⏱ Agent Time Saved Today (min)"
           view   = "singleValue"
           stat   = "Sum"
@@ -500,6 +510,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
+          region = var.aws_region
           title   = "Deal Value per Hour (last 7 days)"
           view    = "timeSeries"
           stacked = false
@@ -521,6 +532,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
+          region = var.aws_region
           title   = "Call Volume - Outcomes (last 7 days)"
           view    = "timeSeries"
           stacked = true
@@ -555,6 +567,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 6
         height = 6
         properties = {
+          region = var.aws_region
           title  = "😊 Avg Carrier Sentiment (1-5)"
           view   = "gauge"
           stat   = "Average"
@@ -574,6 +587,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 6
         height = 6
         properties = {
+          region = var.aws_region
           title  = "⏰ Avg Call Duration (min)"
           view   = "singleValue"
           stat   = "Average"
@@ -592,6 +606,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
+          region = var.aws_region
           title   = "💼 Cumulative Savings (last 7 days)"
           view    = "timeSeries"
           stacked = false
@@ -629,6 +644,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
+          region = var.aws_region
           title   = "Lambda - Invocations & Errors"
           view    = "timeSeries"
           stacked = false
@@ -652,6 +668,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
+          region = var.aws_region
           title   = "Lambda - Execution Duration (ms)"
           view    = "timeSeries"
           stacked = false
@@ -674,6 +691,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
+          region = var.aws_region
           title   = "API Gateway - Request Volume & Errors"
           view    = "timeSeries"
           stacked = false
@@ -697,6 +715,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
+          region = var.aws_region
           title   = "API Gateway - Latency (ms)"
           view    = "timeSeries"
           stacked = false
