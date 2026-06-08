@@ -405,11 +405,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title                = "💰 Total Deal Value Today (USD)"
-          view                 = "singleValue"
-          stat                 = "Sum"
-          period               = 86400
-          setPeriodToTimeRange = true
+          title  = "💰 Total Deal Value Today (USD)"
+          view   = "singleValue"
+          stat   = "Sum"
+          period = 86400
           metrics = [
             [local.custom_namespace, "DealValue", { label = "USD" }]
           ]
@@ -425,11 +424,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title                = "✅ Deals Closed Today"
-          view                 = "singleValue"
-          stat                 = "Sum"
-          period               = 86400
-          setPeriodToTimeRange = true
+          title  = "✅ Deals Closed Today"
+          view   = "singleValue"
+          stat   = "Sum"
+          period = 86400
           metrics = [
             [local.custom_namespace, "SuccessfulDeals", { label = "Deals" }]
           ]
@@ -445,10 +443,9 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title                = "📊 Call Success Rate (%)"
-          view                 = "singleValue"
-          period               = 86400
-          setPeriodToTimeRange = true
+          title  = "📊 Call Success Rate (%)"
+          view   = "singleValue"
+          period = 86400
           metrics = [
             [local.custom_namespace, "SuccessfulDeals", { id = "m1", visible = false, stat = "Sum" }],
             [local.custom_namespace, "CarrierCallsTotal", { id = "m2", visible = false, stat = "Sum" }],
@@ -466,11 +463,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title                = "🏦 Employee Cost Saved Today (USD)"
-          view                 = "singleValue"
-          stat                 = "Sum"
-          period               = 86400
-          setPeriodToTimeRange = true
+          title  = "🏦 Employee Cost Saved Today (USD)"
+          view   = "singleValue"
+          stat   = "Sum"
+          period = 86400
           metrics = [
             [local.custom_namespace, "EmployeeCostSaved", { label = "USD" }]
           ]
@@ -486,11 +482,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title                = "⏱ Agent Time Saved Today (min)"
-          view                 = "singleValue"
-          stat                 = "Sum"
-          period               = 86400
-          setPeriodToTimeRange = true
+          title  = "⏱ Agent Time Saved Today (min)"
+          view   = "singleValue"
+          stat   = "Sum"
+          period = 86400
           metrics = [
             [local.custom_namespace, "TimeSavedMinutes", { label = "Minutes" }]
           ]
@@ -518,11 +513,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 7
         properties = {
           region = var.aws_region
-          title   = "Deal Value per Hour (last 7 days)"
+          title   = "Deal Value per Day (last 7 days)"
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
-          period  = 3600
+          period  = 86400
           metrics = [
             [local.custom_namespace, "DealValue", { label = "Deal Value USD", color = "#2ca02c" }]
           ]
@@ -540,11 +535,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 7
         properties = {
           region = var.aws_region
-          title   = "Call Volume - Outcomes (last 7 days)"
+          title   = "Call Volume - Outcomes per Day (last 7 days)"
           view    = "timeSeries"
           stacked = true
           stat    = "Sum"
-          period  = 3600
+          period  = 86400
           metrics = [
             [local.custom_namespace, "SuccessfulDeals", { label = "Successful", color = "#2ca02c" }],
             [local.custom_namespace, "UnsuccessfulCalls", { label = "Unsuccessful", color = "#d62728" }],
@@ -614,11 +609,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 6
         properties = {
           region = var.aws_region
-          title   = "💼 Cumulative Savings (last 7 days)"
+          title   = "💼 Daily Savings (last 7 days)"
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
-          period  = 3600
+          period  = 86400
           metrics = [
             [local.custom_namespace, "EmployeeCostSaved", { label = "Cost Saved (USD)", color = "#1f77b4", yAxis = "left" }],
             [local.custom_namespace, "TimeSavedMinutes", { label = "Time Saved (min)", color = "#ff7f0e", yAxis = "right" }],
@@ -656,7 +651,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
-          period  = 300
+          period  = 86400
           metrics = [
             ["AWS/Lambda", "Invocations", "FunctionName", aws_lambda_function.api.function_name, { label = "Invocations", color = "#1f77b4" }],
             ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.api.function_name, { label = "Errors", color = "#d62728" }],
@@ -679,7 +674,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           title   = "Lambda - Execution Duration (ms)"
           view    = "timeSeries"
           stacked = false
-          period  = 300
+          period  = 86400
           metrics = [
             ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p50", label = "p50", color = "#2ca02c" }],
             ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.api.function_name, { stat = "p95", label = "p95", color = "#ff7f0e" }],
@@ -703,7 +698,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
-          period  = 300
+          period  = 86400
           metrics = [
             ["AWS/ApiGateway", "Count", "ApiId", aws_apigatewayv2_api.main.id, { label = "Total Requests", color = "#1f77b4" }],
             ["AWS/ApiGateway", "4XXError", "ApiId", aws_apigatewayv2_api.main.id, { label = "4xx Errors", color = "#ff7f0e" }],
@@ -726,7 +721,7 @@ resource "aws_cloudwatch_dashboard" "main" {
           title   = "API Gateway - Latency (ms)"
           view    = "timeSeries"
           stacked = false
-          period  = 300
+          period  = 86400
           metrics = [
             ["AWS/ApiGateway", "Latency", "ApiId", aws_apigatewayv2_api.main.id, { stat = "p50", label = "p50", color = "#2ca02c" }],
             ["AWS/ApiGateway", "Latency", "ApiId", aws_apigatewayv2_api.main.id, { stat = "p95", label = "p95", color = "#ff7f0e" }],
