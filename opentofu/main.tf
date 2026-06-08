@@ -21,7 +21,7 @@ locals {
 }
 
 # =============================================================================
-# S3 – loads catalogue bucket
+# S3 - loads catalogue bucket
 # =============================================================================
 resource "aws_s3_bucket" "loads" {
   bucket        = "${local.name_prefix}-loads-${data.aws_caller_identity.current.account_id}"
@@ -63,7 +63,7 @@ resource "aws_s3_object" "loads" {
 }
 
 # =============================================================================
-# AWS Secrets Manager – FMCSA key & API key
+# AWS Secrets Manager - FMCSA key & API key
 # =============================================================================
 resource "aws_secretsmanager_secret" "fmcsa_api_key" {
   name                    = "${local.name_prefix}/fmcsa-api-key"
@@ -88,7 +88,7 @@ resource "aws_secretsmanager_secret_version" "api_key" {
 }
 
 # =============================================================================
-# ECR – container repository for the Lambda image
+# ECR - container repository for the Lambda image
 # =============================================================================
 resource "aws_ecr_repository" "lambda_api" {
   name                 = "${local.name_prefix}-api"
@@ -180,7 +180,7 @@ resource "null_resource" "docker_build_push" {
 }
 
 # =============================================================================
-# IAM – Lambda execution role
+# IAM - Lambda execution role
 # =============================================================================
 resource "aws_iam_role" "lambda_exec" {
   name = "${local.name_prefix}-lambda-exec"
@@ -244,7 +244,7 @@ resource "aws_iam_role_policy" "lambda_custom" {
 }
 
 # =============================================================================
-# CloudWatch – log groups
+# CloudWatch - log groups
 # =============================================================================
 resource "aws_cloudwatch_log_group" "lambda_api" {
   name              = "/aws/lambda/${local.name_prefix}-api"
@@ -288,12 +288,12 @@ resource "aws_lambda_function" "api" {
 }
 
 # =============================================================================
-# API Gateway v2 – HTTP API (HTTPS, public)
+# API Gateway v2 - HTTP API (HTTPS, public)
 # =============================================================================
 resource "aws_apigatewayv2_api" "main" {
   name          = "${local.name_prefix}-api"
   protocol_type = "HTTP"
-  description   = "Inbound Carrier Load Sales Automation – public API"
+  description   = "Inbound Carrier Load Sales Automation - public API"
 
   cors_configuration {
     allow_origins = ["*"]
@@ -369,7 +369,7 @@ resource "aws_lambda_permission" "apigateway_invoke" {
 data "aws_caller_identity" "current" {}
 
 # =============================================================================
-# CloudWatch Dashboard – Business & Infrastructure Metrics
+# CloudWatch Dashboard - Business & Infrastructure Metrics
 # =============================================================================
 resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = "${local.name_prefix}-operations"
@@ -385,7 +385,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 24
         height = 1
         properties = {
-          markdown = "## 📦 Inbound Carrier Sales – Business Performance"
+          markdown = "## 📦 Inbound Carrier Sales - Business Performance"
         }
       },
 
@@ -521,7 +521,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
-          title   = "Call Volume – Outcomes (last 7 days)"
+          title   = "Call Volume - Outcomes (last 7 days)"
           view    = "timeSeries"
           stacked = true
           stat    = "Sum"
@@ -555,7 +555,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 6
         height = 6
         properties = {
-          title  = "😊 Avg Carrier Sentiment (1–5)"
+          title  = "😊 Avg Carrier Sentiment (1-5)"
           view   = "gauge"
           stat   = "Average"
           period = 86400
@@ -629,7 +629,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda – Invocations & Errors"
+          title   = "Lambda - Invocations & Errors"
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
@@ -652,7 +652,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda – Execution Duration (ms)"
+          title   = "Lambda - Execution Duration (ms)"
           view    = "timeSeries"
           stacked = false
           period  = 300
@@ -674,7 +674,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          title   = "API Gateway – Request Volume & Errors"
+          title   = "API Gateway - Request Volume & Errors"
           view    = "timeSeries"
           stacked = false
           stat    = "Sum"
@@ -697,7 +697,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          title   = "API Gateway – Latency (ms)"
+          title   = "API Gateway - Latency (ms)"
           view    = "timeSeries"
           stacked = false
           period  = 300

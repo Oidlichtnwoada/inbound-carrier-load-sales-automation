@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Stage 1 – dependency installer (no external deps beyond the runtime image,
+# Stage 1 - dependency installer (no external deps beyond the runtime image,
 #            but the stage is retained so future packages need only one edit)
 # ─────────────────────────────────────────────────────────────────────────────
 FROM public.ecr.aws/lambda/python:3.14 AS builder
@@ -17,12 +17,12 @@ RUN pip install \
         -r requirements.txt
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Stage 2 – final image
+# Stage 2 - final image
 # ─────────────────────────────────────────────────────────────────────────────
 FROM public.ecr.aws/lambda/python:3.14
 
 LABEL maintainer="Inbound Carrier Sales Automation" \
-      description="Lambda container image – carrier load sales API" \
+      description="Lambda container image - carrier load sales API" \
       org.opencontainers.image.source="https://github.com/Oidlichtnwoada/inbound-carrier-load-sales-automation"
 
 # Copy site-packages installed in the builder stage

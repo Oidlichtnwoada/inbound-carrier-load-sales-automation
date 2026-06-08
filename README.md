@@ -12,7 +12,7 @@
 | Average call handled end-to-end | < 8 min (vs. 20 min for a human agent) |
 | Employee time saved per call | ~12 min |
 | Agent cost per call (at $60/hr rate) | $0 vs ~$20 |
-| Carrier coverage | 24 × 7 × 365 with zero hold time |
+| Carrier coverage | 24 x 7 x 365 with zero hold time |
 | Loads pitched automatically | 100 % of eligible inventory |
 
 The system transforms a traditionally manual, availability-constrained process into a scalable, always-on revenue channel. Every call outcome — deal volume, negotiation history, carrier sentiment — is captured automatically and surfaced in a real-time CloudWatch dashboard.
@@ -38,7 +38,7 @@ Carrier ──► HappyRobot AI ──► HTTPS (API GW) ──► Lambda (Pytho
 | Component | Purpose |
 |---|---|
 | **AWS API Gateway v2 (HTTP API)** | Public HTTPS endpoint, throttling, access logs |
-| **AWS Lambda (container image)** | Business logic – carrier verification, load search, metrics ingestion |
+| **AWS Lambda (container image)** | Business logic - carrier verification, load search, metrics ingestion |
 | **Amazon ECR** | Container registry for the Lambda image (image-scan on push) |
 | **Amazon S3** | Loads catalogue (`loads.json`); versioned & server-side encrypted |
 | **AWS Secrets Manager** | Stores FMCSA API key and load-sales API key at rest |
@@ -50,6 +50,15 @@ Carrier ──► HappyRobot AI ──► HTTPS (API GW) ──► Lambda (Pytho
 ## API Reference
 
 All endpoints require the header `X-Api-Key: <your_api_key>`.
+
+OpenTofu exports a base URL plus one output per public API route:
+
+| Terraform output | Use for |
+|---|---|
+| `api_endpoint` | Base API Gateway URL for building requests manually |
+| `api_verify_carrier_url` | Direct URL for `GET /carriers/verify` |
+| `api_loads_url` | Direct URL for `GET /loads` |
+| `api_metrics_url` | Direct URL for `POST /metrics` |
 
 ### `GET /carriers/verify`
 
@@ -115,7 +124,7 @@ Search the available loads catalogue. All parameters are optional — calling th
       "commodity_type": "Electronics",
       "num_of_pieces": 48,
       "miles": 373,
-      "dimensions": "96 × 48 × 60"
+      "dimensions": "96 x 48 x 60"
     }
   ],
   "count": 1
@@ -132,7 +141,7 @@ Record the outcome of a completed carrier call. The Lambda publishes each field 
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `sentiment` | float 1–5 | ✅ | Carrier sentiment (1 = very negative, 5 = very positive) |
+| `sentiment` | float 1-5 | ✅ | Carrier sentiment (1 = very negative, 5 = very positive) |
 | `outcome` | string | ✅ | `"successful"` or `"unsuccessful"` |
 | `deal_volume` | float | — | Agreed rate in USD (use `loadboard_rate` on success) |
 | `call_duration_minutes` | float | — | Actual AI call duration in minutes |
@@ -237,7 +246,7 @@ OpenTofu will:
 4. Store both secrets in Secrets Manager.
 5. Deploy the Lambda function (container image), API Gateway HTTP API, IAM roles, CloudWatch log groups, and the operations dashboard.
 
-The full deployment takes approximately **3–5 minutes** (dominated by the Docker build and push).
+The full deployment takes approximately **3-5 minutes** (dominated by the Docker build and push).
 
 ---
 
@@ -248,27 +257,37 @@ tofu output api_endpoint
 # e.g. https://abc123.execute-api.us-east-1.amazonaws.com
 ```
 
+If you want the fully qualified route URLs instead of the base API URL, use:
+
+```bash
+tofu output api_loads_url
+tofu output api_verify_carrier_url
+tofu output api_metrics_url
+```
+
 ---
 
 ### Step 7 — Smoke-test
 
 ```bash
-API_URL=$(tofu output -raw api_endpoint)
+API_LOADS_URL=$(tofu output -raw api_loads_url)
+API_VERIFY_CARRIER_URL=$(tofu output -raw api_verify_carrier_url)
+API_METRICS_URL=$(tofu output -raw api_metrics_url)
 API_KEY="<the api_key you set in step 2>"
 
 # List all loads
-curl -s -H "X-Api-Key: $API_KEY" "$API_URL/loads" | jq .
+curl -s -H "X-Api-Key: $API_KEY" "$API_LOADS_URL" | jq .
 
 # Verify a carrier
 curl -s -H "X-Api-Key: $API_KEY" \
-  "$API_URL/carriers/verify?mc_number=123456" | jq .
+  "$API_VERIFY_CARRIER_URL?mc_number=123456" | jq .
 
 # Record a call outcome
 curl -s -X POST \
   -H "X-Api-Key: $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"sentiment":4.2,"outcome":"successful","deal_volume":1850,"call_duration_minutes":7.5}' \
-  "$API_URL/metrics" | jq .
+  "$API_METRICS_URL" | jq .
 ```
 
 ---
@@ -291,7 +310,7 @@ tofu destroy
 
 ## CloudWatch Dashboard
 
-The dashboard **Inbound Carrier Sales – Operations** is deployed automatically and is accessible at:
+The dashboard **Inbound Carrier Sales - Operations** is deployed automatically and is accessible at:
 
 ```
 https://<region>.console.aws.amazon.com/cloudwatch/home?region=<region>#dashboards:name=inbound-carrier-sales-operations

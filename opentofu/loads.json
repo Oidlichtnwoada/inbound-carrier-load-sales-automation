@@ -12,7 +12,7 @@
     "commodity_type": "Electronics",
     "num_of_pieces": 48,
     "miles": 373,
-    "dimensions": "96 × 48 × 60"
+    "dimensions": "96 x 48 x 60"
   },
   {
     "load_id": 2,
@@ -22,12 +22,12 @@
     "delivery_datetime": 1781186400,
     "equipment_type": "Flatbed",
     "loadboard_rate": 2100.00,
-    "notes": "OEM stamped steel parts for automotive production line; delivery window strictly 06:00–08:00 local time.",
+    "notes": "OEM stamped steel parts for automotive production line; delivery window strictly 06:00-08:00 local time.",
     "weight": 28000,
     "commodity_type": "AutoParts",
     "num_of_pieces": 12,
     "miles": 311,
-    "dimensions": "120 × 96 × 48"
+    "dimensions": "120 x 96 x 48"
   },
   {
     "load_id": 3,
@@ -37,12 +37,12 @@
     "delivery_datetime": 1781283600,
     "equipment_type": "Reefer",
     "loadboard_rate": 2400.00,
-    "notes": "Chilled cargo 2–8 °C; continuous temperature monitoring required; reefer unit must have valid ATP certificate.",
+    "notes": "Chilled cargo 2-8 °C; continuous temperature monitoring required; reefer unit must have valid ATP certificate.",
     "weight": 22000,
     "commodity_type": "FoodGrade",
     "num_of_pieces": 96,
     "miles": 318,
-    "dimensions": "96 × 48 × 54"
+    "dimensions": "96 x 48 x 54"
   },
   {
     "load_id": 4,
@@ -57,7 +57,7 @@
     "commodity_type": "BuildingMaterials",
     "num_of_pieces": 24,
     "miles": 562,
-    "dimensions": "240 × 96 × 48"
+    "dimensions": "240 x 96 x 48"
   },
   {
     "load_id": 5,
@@ -72,7 +72,7 @@
     "commodity_type": "TextileGoods",
     "num_of_pieces": 240,
     "miles": 391,
-    "dimensions": "96 × 48 × 72"
+    "dimensions": "96 x 48 x 72"
   },
   {
     "load_id": 6,
@@ -87,7 +87,7 @@
     "commodity_type": "MachineryParts",
     "num_of_pieces": 8,
     "miles": 175,
-    "dimensions": "480 × 96 × 36"
+    "dimensions": "480 x 96 x 36"
   },
   {
     "load_id": 7,
@@ -102,7 +102,7 @@
     "commodity_type": "PackagedGoods",
     "num_of_pieces": 144,
     "miles": 571,
-    "dimensions": "96 × 48 × 60"
+    "dimensions": "96 x 48 x 60"
   },
   {
     "load_id": 8,
@@ -117,7 +117,7 @@
     "commodity_type": "ChemicalGoods",
     "num_of_pieces": 1,
     "miles": 627,
-    "dimensions": "240 × 96 × 96"
+    "dimensions": "240 x 96 x 96"
   },
   {
     "load_id": 9,
@@ -132,7 +132,7 @@
     "commodity_type": "FrozenGoods",
     "num_of_pieces": 32,
     "miles": 884,
-    "dimensions": "96 × 48 × 54"
+    "dimensions": "96 x 48 x 54"
   },
   {
     "load_id": 10,
@@ -147,6 +147,6 @@
     "commodity_type": "IndustrialEquipment",
     "num_of_pieces": 4,
     "miles": 394,
-    "dimensions": "360 × 120 × 60"
+    "dimensions": "360 x 120 x 60"
   }
 ]

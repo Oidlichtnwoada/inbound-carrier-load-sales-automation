@@ -1,5 +1,5 @@
 """
-Inbound Carrier Sales Automation – Lambda API Handler
+Inbound Carrier Sales Automation - Lambda API Handler
 ======================================================
 Endpoints
 ---------
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 # ---------------------------------------------------------------------------
-# Environment – injected by Lambda / Terraform
+# Environment - injected by Lambda / Terraform
 # ---------------------------------------------------------------------------
 LOADS_BUCKET: str = os.environ["LOADS_BUCKET"]
 LOADS_KEY: str = os.environ["LOADS_KEY"]
@@ -103,11 +103,11 @@ def _authenticate(event: dict) -> bool:
 
 def _parse_dimensions(dimensions: str) -> tuple[float, float, float]:
     """
-    Parse a 'Length × Width × Height' string (using the × character or 'x')
+    Parse a 'Length x Width x Height' string (using the x character or 'x')
     into a (length, width, height) float tuple. Returns (0, 0, 0) on failure.
     """
     try:
-        parts = dimensions.replace("×", "x").split("x")
+        parts = dimensions.replace("x", "x").split("x")
         if len(parts) != 3:
             return (0.0, 0.0, 0.0)
         return tuple(float(p.strip()) for p in parts)  # type: ignore[return-value]
@@ -167,14 +167,14 @@ def _handle_verify_carrier(event: dict) -> dict:
 
     Query parameters
     ----------------
-    mc_number : str  (required) – Motor Carrier docket number, digits only.
+    mc_number : str  (required) - Motor Carrier docket number, digits only.
 
     Returns
     -------
-    200 – Carrier found; includes eligibility flag and key carrier details.
-    400 – mc_number missing.
-    404 – Carrier not found in the FMCSA database.
-    502 – FMCSA API unavailable.
+    200 - Carrier found; includes eligibility flag and key carrier details.
+    400 - mc_number missing.
+    404 - Carrier not found in the FMCSA database.
+    502 - FMCSA API unavailable.
     """
     params: dict = event.get("queryStringParameters") or {}
     mc_number = params.get("mc_number", "").strip()
@@ -308,7 +308,7 @@ def _matches_load_filters(load: dict, params: dict) -> bool:
             return False
 
     # ── Dimension range filters ──────────────────────────────────────────────
-    length, width, height = _parse_dimensions(load.get("dimensions", "0 × 0 × 0"))
+    length, width, height = _parse_dimensions(load.get("dimensions", "0 x 0 x 0"))
     for dim_name, dim_val in (("length", length), ("width", width), ("height", height)):
         lo = _to_float(params.get(f"{dim_name}_min"))
         hi = _to_float(params.get(f"{dim_name}_max"))
@@ -324,22 +324,22 @@ def _handle_search_loads(event: dict) -> dict:
     """
     Search the available loads catalogue.
 
-    Query parameters (all optional – omitting all returns every load)
+    Query parameters (all optional - omitting all returns every load)
     ---------------------------------------------------------------
-    load_id              : int    – exact match
-    origin               : str    – exact, case-insensitive
-    destination          : str    – exact, case-insensitive
-    equipment_type       : str    – exact, case-insensitive
-    commodity_type       : str    – exact, case-insensitive
-    weight_min/max       : float  – pounds
+    load_id              : int    - exact match
+    origin               : str    - exact, case-insensitive
+    destination          : str    - exact, case-insensitive
+    equipment_type       : str    - exact, case-insensitive
+    commodity_type       : str    - exact, case-insensitive
+    weight_min/max       : float  - pounds
     miles_min/max        : float
-    loadboard_rate_min/max : float – USD
+    loadboard_rate_min/max : float - USD
     num_of_pieces_min/max : float
-    pickup_datetime_min/max  : float – Unix timestamp
-    delivery_datetime_min/max : float – Unix timestamp
-    length_min/max       : float  – inches (first dimension)
-    width_min/max        : float  – inches (second dimension)
-    height_min/max       : float  – inches (third dimension)
+    pickup_datetime_min/max  : float - Unix timestamp
+    delivery_datetime_min/max : float - Unix timestamp
+    length_min/max       : float  - inches (first dimension)
+    width_min/max        : float  - inches (second dimension)
+    height_min/max       : float  - inches (third dimension)
     """
     params: dict = event.get("queryStringParameters") or {}
 
@@ -365,9 +365,9 @@ def _handle_save_metrics(event: dict) -> dict:
 
     Request body (JSON)
     -------------------
-    sentiment              : float  1.0–5.0  (1 = very negative, 5 = very positive)
+    sentiment              : float  1.0-5.0  (1 = very negative, 5 = very positive)
     outcome                : str    "successful" | "unsuccessful"
-    deal_volume            : float  USD – set to the agreed loadboard_rate
+    deal_volume            : float  USD - set to the agreed loadboard_rate
     call_duration_minutes  : float  actual duration of the AI call in minutes
     EmployeeCostSaved is calculated automatically as:
     call_duration_minutes * (EMPLOYEE_COST_PER_HOUR / 60)
