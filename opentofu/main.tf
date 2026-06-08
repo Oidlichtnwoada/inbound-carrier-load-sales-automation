@@ -380,6 +380,8 @@ resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = "${local.name_prefix}-operations"
 
   dashboard_body = jsonencode({
+    start          = "-PT24H"
+    periodOverride = "inherit"
     widgets = [
 
       # ── Section header: Business Performance ──────────────────────────────
