@@ -403,10 +403,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title  = "💰 Total Deal Value Today (USD)"
-          view   = "singleValue"
-          stat   = "Sum"
-          period = 86400
+          title                = "💰 Total Deal Value Today (USD)"
+          view                 = "singleValue"
+          stat                 = "Sum"
+          period               = 86400
+          setPeriodToTimeRange = true
           metrics = [
             [local.custom_namespace, "DealValue", { label = "USD" }]
           ]
@@ -422,10 +423,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title  = "✅ Deals Closed Today"
-          view   = "singleValue"
-          stat   = "Sum"
-          period = 86400
+          title                = "✅ Deals Closed Today"
+          view                 = "singleValue"
+          stat                 = "Sum"
+          period               = 86400
+          setPeriodToTimeRange = true
           metrics = [
             [local.custom_namespace, "SuccessfulDeals", { label = "Deals" }]
           ]
@@ -441,9 +443,10 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title  = "📊 Call Success Rate (%)"
-          view   = "singleValue"
-          period = 86400
+          title                = "📊 Call Success Rate (%)"
+          view                 = "singleValue"
+          period               = 86400
+          setPeriodToTimeRange = true
           metrics = [
             [local.custom_namespace, "SuccessfulDeals", { id = "m1", visible = false, stat = "Sum" }],
             [local.custom_namespace, "CarrierCallsTotal", { id = "m2", visible = false, stat = "Sum" }],
@@ -461,10 +464,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title  = "🏦 Employee Cost Saved Today (USD)"
-          view   = "singleValue"
-          stat   = "Sum"
-          period = 86400
+          title                = "🏦 Employee Cost Saved Today (USD)"
+          view                 = "singleValue"
+          stat                 = "Sum"
+          period               = 86400
+          setPeriodToTimeRange = true
           metrics = [
             [local.custom_namespace, "EmployeeCostSaved", { label = "USD" }]
           ]
@@ -480,10 +484,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         height = 5
         properties = {
           region = var.aws_region
-          title  = "⏱ Agent Time Saved Today (min)"
-          view   = "singleValue"
-          stat   = "Sum"
-          period = 86400
+          title                = "⏱ Agent Time Saved Today (min)"
+          view                 = "singleValue"
+          stat                 = "Sum"
+          period               = 86400
+          setPeriodToTimeRange = true
           metrics = [
             [local.custom_namespace, "TimeSavedMinutes", { label = "Minutes" }]
           ]
