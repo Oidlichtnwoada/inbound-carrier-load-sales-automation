@@ -198,6 +198,12 @@ def _handle_verify_carrier(event: dict) -> dict:
         "https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/"
         f"{mc_number}/?webKey={fmcsa_key}"
     )
+    # Log the endpoint shape for troubleshooting, but never log full secrets.
+    logger.info(
+        "FMCSA request endpoint for MC %s: /qc/services/carriers/docket-number/%s/?webKey=<redacted>",
+        mc_number,
+        mc_number,
+    )
 
     try:
         req = urllib.request.Request(
@@ -206,8 +212,20 @@ def _handle_verify_carrier(event: dict) -> dict:
             method="GET",
         )
         with urllib.request.urlopen(req, timeout=10) as resp:
-            data: dict = json.loads(resp.read().decode("utf-8"))
+            raw_body = resp.read().decode("utf-8")
+            data: Any = json.loads(raw_body)
+            logger.info(
+                "FMCSA response for MC %s: status=%s payload_type=%s",
+                mc_number,
+                resp.status,
+                type(data).__name__,
+            )
     except urllib.error.HTTPError as exc:
+        error_body = ""
+        try:
+            error_body = exc.read().decode("utf-8")
+        except Exception:  # noqa: BLE001
+            error_body = "<unavailable>"
         if exc.code == 404:
             return _response(
                 404,
@@ -217,13 +235,30 @@ def _handle_verify_carrier(event: dict) -> dict:
                     "reason": "Carrier not found in the FMCSA database.",
                 },
             )
-        logger.error("FMCSA HTTP error %s for MC %s", exc.code, mc_number)
+        logger.error(
+            "FMCSA HTTP error %s for MC %s. body_snippet=%s",
+            exc.code,
+            mc_number,
+            error_body[:500],
+        )
         return _response(502, {"error": "FMCSA API returned an error.", "fmcsa_status": exc.code})
     except Exception:
         logger.exception("Unexpected error calling FMCSA API for MC %s", mc_number)
         return _response(502, {"error": "FMCSA API unavailable."})
 
-    carrier: dict = (data.get("content") or {}).get("carrier") or {}
+    # FMCSA can return content either as a dict or as a list depending on endpoint/version.
+    carrier: dict[str, Any] = {}
+    content: Any = data.get("content") if isinstance(data, dict) else data
+
+    if isinstance(content, dict):
+        nested = content.get("carrier")
+        carrier = nested if isinstance(nested, dict) else content
+    elif isinstance(content, list) and content:
+        first = content[0]
+        if isinstance(first, dict):
+            nested = first.get("carrier")
+            carrier = nested if isinstance(nested, dict) else first
+
     if not carrier:
         return _response(
             404,
