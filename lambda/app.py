@@ -275,12 +275,29 @@ def _handle_verify_carrier(event: dict) -> dict:
         )
 
     allowed_to_operate: bool = carrier.get("allowedToOperate", "N") == "Y"
-    common_auth_status: str = (
-        (carrier.get("commonAuthorityStatus") or {}).get("commonAuthorityStatus") or "N"
-    )
+
+    common_auth_raw = carrier.get("commonAuthorityStatus")
+    if isinstance(common_auth_raw, dict):
+        common_auth_status_code = common_auth_raw.get("commonAuthorityStatus") or "N"
+        common_auth_status_desc = common_auth_raw.get("commonAuthorityStatusDesc")
+    elif isinstance(common_auth_raw, str):
+        common_auth_status_code = common_auth_raw
+        common_auth_status_desc = common_auth_raw
+    else:
+        common_auth_status_code = "N"
+        common_auth_status_desc = None
+
+    contract_auth_raw = carrier.get("contractAuthorityStatus")
+    if isinstance(contract_auth_raw, dict):
+        contract_auth_status_desc = contract_auth_raw.get("contractAuthorityStatusDesc")
+    elif isinstance(contract_auth_raw, str):
+        contract_auth_status_desc = contract_auth_raw
+    else:
+        contract_auth_status_desc = None
+
     # A carrier is eligible when FMCSA marks them allowed to operate
     # and holds at least one active authority grant.
-    eligible: bool = allowed_to_operate and common_auth_status in ("A",)
+    eligible: bool = allowed_to_operate and common_auth_status_code in ("A",)
 
     return _response(
         200,
@@ -289,18 +306,10 @@ def _handle_verify_carrier(event: dict) -> dict:
             "mc_number": mc_number,
             "dot_number": carrier.get("dotNumber"),
             "legal_name": carrier.get("legalName"),
-            "dba_name": carrier.get("dba"),
+            "dba_name": carrier.get("dba") or carrier.get("dbaName"),
             "allowed_to_operate": allowed_to_operate,
-            "common_authority_status": (
-                (carrier.get("commonAuthorityStatus") or {}).get(
-                    "commonAuthorityStatusDesc"
-                )
-            ),
-            "contract_authority_status": (
-                (carrier.get("contractAuthorityStatus") or {}).get(
-                    "contractAuthorityStatusDesc"
-                )
-            ),
+            "common_authority_status": common_auth_status_desc,
+            "contract_authority_status": contract_auth_status_desc,
             "city": carrier.get("phyCity"),
             "state": carrier.get("phyState"),
             "total_power_units": carrier.get("totalPowerUnits"),
