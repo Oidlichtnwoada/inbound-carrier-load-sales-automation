@@ -195,8 +195,8 @@ def _handle_verify_carrier(event: dict) -> dict:
         return _response(500, {"error": "Internal configuration error."})
 
     url = (
-        "https://mobile.fmcsa.dot.gov/qc/services/carriers/search/docket-number/"
-        f"{mc_number}?webKey={fmcsa_key}"
+        "https://mobile.fmcsa.dot.gov/qc/services/carriers/docket-number/"
+        f"{mc_number}/?webKey={fmcsa_key}"
     )
 
     try:
