@@ -220,6 +220,11 @@ def _handle_verify_carrier(event: dict) -> dict:
                 resp.status,
                 type(data).__name__,
             )
+            logger.info(
+                "FMCSA parsed response object for MC %s: %s",
+                mc_number,
+                json.dumps(data, default=str),
+            )
     except urllib.error.HTTPError as exc:
         error_body = ""
         try:
