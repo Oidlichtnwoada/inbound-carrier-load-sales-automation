@@ -144,11 +144,11 @@ Record the outcome of a completed carrier call. The Lambda publishes each field 
 | `sentiment` | float 1-5 | ✅ | Carrier sentiment (1 = very negative, 5 = very positive) |
 | `outcome` | string | ✅ | `"successful"` or `"unsuccessful"` |
 | `deal_volume` | float | — | Agreed rate in USD (use `loadboard_rate` on success) |
-| `call_duration_minutes` | float | — | Actual AI call duration in minutes |
+| `call_duration_seconds` | float | — | Actual AI call duration in seconds |
 
 `EmployeeCostSaved` is computed automatically by the API as:
 
-`call_duration_minutes * (employee_cost_per_hour / 60)`
+`call_duration_seconds * (employee_cost_per_hour / 3600)`
 
 where `employee_cost_per_hour` is an OpenTofu input variable (default: `50`).
 
@@ -286,7 +286,7 @@ curl -s -H "X-Api-Key: $API_KEY" \
 curl -s -X POST \
   -H "X-Api-Key: $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"sentiment":4.2,"outcome":"successful","deal_volume":1850,"call_duration_minutes":7.5}' \
+  -d '{"sentiment":4.2,"outcome":"successful","deal_volume":1850,"call_duration_seconds":450}' \
   "$API_METRICS_URL" | jq .
 ```
 

@@ -417,9 +417,9 @@ def _handle_save_metrics(event: dict) -> dict:
     sentiment              : float  1.0-5.0  (1 = very negative, 5 = very positive)
     outcome                : str    "successful" | "unsuccessful"
     deal_volume            : float  USD - set to the agreed loadboard_rate
-    call_duration_minutes  : float  actual duration of the AI call in minutes
+    call_duration_seconds  : float  actual duration of the AI call in seconds
     EmployeeCostSaved is calculated automatically as:
-    call_duration_minutes * (EMPLOYEE_COST_PER_HOUR / 60)
+    call_duration_seconds * (EMPLOYEE_COST_PER_HOUR / 3600)
     """
     try:
         body: dict = json.loads(event.get("body") or "{}")
@@ -429,7 +429,7 @@ def _handle_save_metrics(event: dict) -> dict:
     sentiment = body.get("sentiment")
     outcome = body.get("outcome")
     deal_volume = body.get("deal_volume")
-    call_duration_minutes = body.get("call_duration_minutes")
+    call_duration_seconds = body.get("call_duration_seconds")
 
     # ── Validation ───────────────────────────────────────────────────────────
     if sentiment is not None:
@@ -473,18 +473,19 @@ def _handle_save_metrics(event: dict) -> dict:
         except (ValueError, TypeError):
             return _response(400, {"error": "'deal_volume' must be a number."})
 
-    if call_duration_minutes is not None:
+    if call_duration_seconds is not None:
         try:
-            duration = float(call_duration_minutes)
+            duration = float(call_duration_seconds)
         except (ValueError, TypeError):
             return _response(
-                400, {"error": "'call_duration_minutes' must be a number."}
+                400, {"error": "'call_duration_seconds' must be a number."}
             )
-        _add("CallDurationMinutes", duration)
+        duration_minutes = duration / 60.0
+        _add("CallDurationMinutes", duration_minutes)
         # Automated handling saves the full call duration for human staff.
-        time_saved = duration
-        _add("TimeSavedMinutes", time_saved)
-        employee_cost_saved = duration * (EMPLOYEE_COST_PER_HOUR / 60.0)
+        time_saved_minutes = duration_minutes
+        _add("TimeSavedMinutes", time_saved_minutes)
+        employee_cost_saved = duration * (EMPLOYEE_COST_PER_HOUR / 3600.0)
         _add("EmployeeCostSaved", employee_cost_saved)
 
     # ── Publish ──────────────────────────────────────────────────────────────
