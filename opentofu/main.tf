@@ -2,8 +2,8 @@
 # Locals
 # =============================================================================
 locals {
-  name_prefix      = var.app_name
-  custom_namespace = "InboundCarrierSales/Calls"
+  name_prefix           = var.app_name
+  custom_namespace      = "InboundCarrierSales/Calls"
   lambda_build_strategy = "buildx-load-v1"
 
   # Deterministic image tag: changes whenever app.py or Dockerfile changes,
@@ -152,8 +152,8 @@ resource "aws_ecr_lifecycle_policy" "lambda_api" {
 # =============================================================================
 resource "null_resource" "docker_build_push" {
   triggers = {
-    image_tag       = local.lambda_image_tag
-    build_strategy  = local.lambda_build_strategy
+    image_tag      = local.lambda_image_tag
+    build_strategy = local.lambda_build_strategy
   }
 
   provisioner "local-exec" {
@@ -512,7 +512,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "Deal Value per Day (last 7 days)"
           view    = "timeSeries"
           stacked = false
@@ -534,7 +534,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 7
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "Call Volume - Outcomes per Day (last 7 days)"
           view    = "timeSeries"
           stacked = true
@@ -608,7 +608,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "💼 Daily Savings (last 7 days)"
           view    = "timeSeries"
           stacked = false
@@ -646,7 +646,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "Lambda - Invocations & Errors"
           view    = "timeSeries"
           stacked = false
@@ -670,7 +670,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "Lambda - Execution Duration (ms)"
           view    = "timeSeries"
           stacked = false
@@ -693,7 +693,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "API Gateway - Request Volume & Errors"
           view    = "timeSeries"
           stacked = false
@@ -717,7 +717,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         width  = 12
         height = 6
         properties = {
-          region = var.aws_region
+          region  = var.aws_region
           title   = "API Gateway - Latency (ms)"
           view    = "timeSeries"
           stacked = false
