@@ -1,3 +1,4 @@
 *.auto.tfvars
 .terraform
 __pycache__
+.DS_Store
