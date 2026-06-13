@@ -1,7 +1,7 @@
 # Inbound Carrier Load Sales Automation
 
 > **AI-powered inbound freight sales desk** — carriers call in, the AI vets them, matches loads, negotiates rates, and books the haul.  
-> Built for the HappyRobot platform challenge; backend hosted on AWS.
+> Built as an automated voice-sales backend on AWS.
 
 ---
 
@@ -22,7 +22,7 @@ The system transforms a traditionally manual, availability-constrained process i
 ## Architecture
 
 ```
-Carrier ──► HappyRobot AI ──► HTTPS (API GW) ──► Lambda (Python 3.14)
+Carrier ──► AI Voice Agent ──► HTTPS (API GW) ──► Lambda (Python 3.14)
                                                         │
                               ┌─────────────────────────┼──────────────────────────┐
                               │                         │                          │
